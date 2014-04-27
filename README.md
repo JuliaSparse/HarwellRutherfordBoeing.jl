@@ -11,7 +11,7 @@ Build `hsplit.c` using `cc -o hsplit hsplit.c`. This tool may be used to split a
 ## Example
 
 ````JULIA
-julia> import("rb.jl")
+julia> using rb
 julia> M = HarwellBoeingMatrix("well1850.rra")
 Harwell-Boeing matrix WELL1850 of type RRA
 1850 rows, 712 cols, 8758 nonzeros
@@ -29,6 +29,8 @@ julia> M.rhs'
 
 ## Testing
 
-The script `test_rb.jl` may be used to scan through the entire Harwell-Boeing collection and read each matrix.
+````JULIA
+julia> Pkg.test("rb")
+````
 
 [![GPLv3](http://www.gnu.org/graphics/gplv3-88x31.png)](http://www.gnu.org/licenses/gpl.html "GPLv3")
