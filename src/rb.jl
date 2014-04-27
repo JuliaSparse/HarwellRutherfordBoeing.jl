@@ -1,3 +1,8 @@
+module rb
+
+export HarwellBoeingMatrix
+
+
 type HBMeta
   # Metadata attached to a Harwell-Boeing matrix.
   title :: String
@@ -28,7 +33,9 @@ type HBMeta
   nrhsix :: Int
 end
 
+
 RHSType = Union(Array{Float64,2}, Array{Complex64,2}, SparseMatrixCSC)
+
 
 type HarwellBoeingMatrix
 
@@ -134,6 +141,7 @@ type HarwellBoeingMatrix
   end
 end
 
+
 # Helper functions.
 
 function decode_int_fmt(fmt :: String)
@@ -142,6 +150,7 @@ function decode_int_fmt(fmt :: String)
   end
   return map(int, split(fmt, 'I'))
 end
+
 
 function decode_real_fmt(fmt :: String)
   fmt = join(split(fmt))  # Remove all white spaces.
@@ -171,6 +180,7 @@ function decode_real_fmt(fmt :: String)
   return (npl, len, scale)
 end
 
+
 function standardize_real(number_as_str :: String)
   s = join(split(number_as_str))  # for numbers in the form "0.24555165E 00".
   # change ".16000000+006" to ".16000000e+006". The first char could be +/-.
@@ -183,6 +193,7 @@ function standardize_real(number_as_str :: String)
   end
   return s
 end
+
 
 function read_array(io :: IO, n :: Int, fmt :: String; is_complex :: Bool = false)
   if 'I' in fmt
@@ -223,6 +234,7 @@ function read_array(io :: IO, n :: Int, fmt :: String; is_complex :: Bool = fals
   return is_complex ? [Complex64(x[i], x[i+1]) for i = 1 : 2 : n-1] : x
 end
 
+
 # Displaying Harwell-Boeing matrix instances.
 
 import Base.show, Base.print
@@ -259,4 +271,6 @@ function print(io :: IO, hb :: HarwellBoeingMatrix)
   if size(hb.sol,2) > 0
     display(hb.sol'); @printf("\n")
   end
+end
+
 end
