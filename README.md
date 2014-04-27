@@ -30,3 +30,5 @@ julia> M.rhs'
 ## Testing
 
 The script `test_rb.jl` may be used to scan through the entire Harwell-Boeing collection and read each matrix.
+
+[![GPLv3](http://www.gnu.org/graphics/gplv3-88x31.png)](http://www.gnu.org/licenses/gpl.html "GPLv3")
