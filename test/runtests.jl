@@ -1,2 +1,2 @@
 println("Running tests ...")
-include("test_rb.jl")
+include("test_hb.jl")
