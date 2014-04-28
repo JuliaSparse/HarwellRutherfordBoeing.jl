@@ -212,16 +212,24 @@ function read_array(io :: IO, n :: Int, fmt :: String; is_complex :: Bool = fals
 
   x = zeros(typ, n)
   for j = 1 : div(n, npl)
+    if typ == Float64
       line = join(split(uppercase(readline(io)), 'D'), 'e')
-      chunk = [line[len*(i-1)+1:len*i] for i = 1 : npl]
-      if typ == Float64
-        chunk = map(standardize_real, chunk)
-      end
-      x[npl * (j-1) + 1 : npl * j] = map(conv, chunk)
+    else
+      line = readline(io)
+    end
+    chunk = [line[len*(i-1)+1:len*i] for i = 1 : npl]
+    if typ == Float64
+      chunk = map(standardize_real, chunk)
+    end
+    x[npl * (j-1) + 1 : npl * j] = map(conv, chunk)
   end
   rem = mod(n, npl)
   if rem > 0
-    line = join(split(uppercase(readline(io)), 'D'), 'e')
+    if typ == Float64
+      line = join(split(uppercase(readline(io)), 'D'), 'e')
+    else
+      line = readline(io)
+    end
     chunk = [line[len*(i-1)+1:len*i] for i = 1 : rem]
     if typ == Float64
       chunk = map(standardize_real, chunk)
