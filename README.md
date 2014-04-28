@@ -11,7 +11,7 @@ Build `hsplit.c` using `cc -o hsplit hsplit.c`. This tool may be used to split a
 ## Example
 
 ````JULIA
-julia> using rb
+julia> using HarwellBoeing
 julia> M = HarwellBoeingMatrix("well1850.rra")
 Harwell-Boeing matrix WELL1850 of type RRA
 1850 rows, 712 cols, 8758 nonzeros
@@ -30,7 +30,7 @@ julia> M.rhs'
 ## Testing
 
 ````JULIA
-julia> Pkg.test("rb")
+julia> Pkg.test("HarwellBoeing")
 ````
 
 [![GPLv3](http://www.gnu.org/graphics/gplv3-88x31.png)](http://www.gnu.org/licenses/gpl.html "GPLv3")
