@@ -1,4 +1,4 @@
-using rb
+using HarwellBoeing
 
 matrices = ["lock1074.pse" "well1850.rra" "young3c.csa" ]
 

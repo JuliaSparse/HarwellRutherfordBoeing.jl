@@ -1,4 +1,4 @@
-module rb
+module HarwellBoeing
 
 export HarwellBoeingMatrix
 
