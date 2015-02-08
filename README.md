@@ -1,4 +1,12 @@
-# A [Julia](http://julialang.org) Reader for the [Harwell-Boeing Format](http://math.nist.gov/MatrixMarket/data/Harwell-Boeing)
+# A [Julia](http://julialang.org) Reader for the [Harwell-Boeing](http://math.nist.gov/MatrixMarket/formats.html#hb) and [Rutherford-Boeing](https://www.cise.ufl.edu/research/sparse/matrices/DOC/rb.pdf) Formats
+
+## Installing
+
+For now:
+````JULIA
+julia> Pkg.clone("https://github.com/dpo/HarwellRutherfordBoeing.jl.git")
+julia> Pkg.test("HarwellRutherfordBoeing")
+````
 
 ## Obtaining the Harwell-Boeing Collection
 
@@ -8,10 +16,14 @@ Retrieve the systems from
 
 Build `hsplit.c` using `cc -o hsplit hsplit.c`. This tool may be used to split a data file into its constituents. This module will only read one set per file.
 
+## Obtaining Matrices and Supplementary Data in Rutherford-Boeing Format
+
+The best source is the [University of Florida Sparse Matrix Collection](http://www.cise.ufl.edu/research/sparse/matrices).
+
 ## Example
 
 ````JULIA
-julia> using HarwellBoeing
+julia> using HarwellRutherfordBoeing
 julia> M = HarwellBoeingMatrix("well1850.rra")
 Harwell-Boeing matrix WELL1850 of type RRA
 1850 rows, 712 cols, 8758 nonzeros
@@ -25,12 +37,14 @@ julia > M.matrix
 julia> M.rhs'
 1x1850 Array{Float64,2}:
 6.40676  0.58834  6.40279  0.595772  …  -3.30846  -2.91383  -2.91705
-````
 
-## Testing
+julia> rb = RutherfordBoeingData("aa3.rb")
+Rutherford-Boeing data 1681 of type pra
+825 rows, 8627 cols, 70806 nonzeros
 
-````JULIA
-julia> Pkg.test("HarwellBoeing")
+julia> using PyPlot
+
+julia> spy(rb.data, markersize=2)
 ````
 
 This content is released under the [MIT](http://opensource.org/licenses/MIT) License.
