@@ -41,7 +41,7 @@ type HarwellBoeingMatrix
 
   meta   :: HBMeta
   matrix :: SparseMatrixCSC
-  rhs    :: RHSType
+  rhs    :: RHSType  # Right-hand side, if any.
   guess  :: RHSType  # Initial guesses, if any.
   sol    :: RHSType  # Solutions, if any.
 
@@ -271,12 +271,15 @@ function print(io :: IO, hb :: HarwellBoeingMatrix)
   @printf("%d right-hand sides, %d guesses, %d solutions\n",
            size(hb.rhs,2), size(hb.guess,2), size(hb.sol,2))
   if size(hb.rhs,2) > 0
+    @printf("Right-hand side(s):\n");
     display(hb.rhs'); @printf("\n")
   end
   if size(hb.guess,2) > 0
+    @printf("Initial guess(es):\n");
     display(hb.guess'); @printf("\n")
   end
   if size(hb.sol,2) > 0
+    @printf("Solution(s):\n");
     display(hb.sol'); @printf("\n")
   end
 end
