@@ -7,3 +7,11 @@ for hb_matrix in hb_matrices
   print(M)
   @printf("\n")
 end
+
+rb_data = ["commanche_dual.rb"]
+
+for rb_datum in rb_data
+  M = RutherfordBoeingData(rb_datum)
+  print(M)
+  @printf("\n")
+end
