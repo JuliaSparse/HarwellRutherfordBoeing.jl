@@ -52,7 +52,7 @@ type HarwellBoeingMatrix
     seekstart(hb)
     line  = readline(hb)
     title = strip(line[1:72])      # A72
-    key   = strip(line[72:end-1])  # A8
+    key   = strip(line[73:end-1])  # A8
     totcrd, ptrcrd, indcrd, valcrd, rhscrd = map(int, split(chomp(readline(hb))))
 
     line = readline(hb)
