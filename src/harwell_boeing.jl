@@ -1,6 +1,3 @@
-module HarwellBoeing
-
-export HarwellBoeingMatrix
 include("hrb_utils.jl")
 
 
@@ -181,6 +178,4 @@ function print(io :: IO, hb :: HarwellBoeingMatrix)
     @printf("Solution(s):\n");
     display(hb.sol'); @printf("\n")
   end
-end
-
 end
