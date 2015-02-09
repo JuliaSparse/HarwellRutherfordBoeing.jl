@@ -4,7 +4,7 @@
 
 For now:
 ````JULIA
-julia> Pkg.clone("https://github.com/dpo/HarwellRutherfordBoeing.jl.git")
+julia> Pkg.clone("https://github.com/JuliaSparse/HarwellRutherfordBoeing.jl.git")
 julia> Pkg.test("HarwellRutherfordBoeing")
 ````
 
