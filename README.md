@@ -1,5 +1,9 @@
 # A [Julia](http://julialang.org) Reader for the [Harwell-Boeing](http://math.nist.gov/MatrixMarket/formats.html#hb) and [Rutherford-Boeing](https://www.cise.ufl.edu/research/sparse/matrices/DOC/rb.pdf) Formats
 
+[![Build Status](https://travis-ci.org/JuliaSparse/HarwellRutherfordBoeing.jl.svg?branch=ci)](https://travis-ci.org/JuliaSparse/HarwellRutherfordBoeing.jl)
+[![Build status](https://ci.appveyor.com/api/projects/status/3qrjx53tfff2hnrl?svg=true)](https://ci.appveyor.com/project/dpo/harwellrutherfordboeing-jl)
+
+
 ## Installing
 
 For now:
