@@ -20,7 +20,7 @@ type RBMeta
   valfmt :: String
 
   dattyp :: String
-  positn :: String
+  positn :: Char
   orgniz :: Char
   caseid :: String
   numerf :: Char
@@ -30,7 +30,7 @@ type RBMeta
 end
 
 
-RBDataType = Union(Array{Float64,2}, Array{Complex64,2}, SparseMatrixCSC)
+RBDataType = Union(Array{Int64,2}, Array{Float64,2}, Array{Complex128,2}, SparseMatrixCSC)
 
 
 type RutherfordBoeingData
@@ -39,7 +39,7 @@ type RutherfordBoeingData
   data :: RBDataType
 
   function RutherfordBoeingData(file_name :: String)
-    data_types = ['r' => Float64, 'c' => Complex64, 'i' => Int64]
+    data_types = ['r' => Float64, 'c' => Complex128, 'i' => Int64]
     rb = open(file_name)
 
     # Read header.
@@ -80,7 +80,7 @@ type RutherfordBoeingData
       meta = RBMeta(title, key, mxtype, nrow, ncol, nnzero, neltvl,
                     mxtype[2] == 's', mxtype[3] == 'a', pattern_only,
                     ptrfmt, indfmt, pattern_only ? "" : valfmt,
-                    "", "", '\0', "", '\0', "", "", "")
+                    "", '\0', '\0', "", '\0', "", "", "")
 
     else
 
@@ -90,47 +90,47 @@ type RutherfordBoeingData
       orgniz = buffer1[5]
       caseid = buffer1[7:14]
       numerf = buffer1[16]
-      nrow, ncol, nnzero = map(int, buffer1[17:end])
-      auxfm1, auxfm2, auxfm3 = split(strip(buffer2))
+      intvals = map(int, split(chomp(buffer1[17:end])))
+      auxfmts = split(strip(buffer2))
+      auxfm1 = auxfm2 = auxfm3 = ""
+      dattyp in ["rhs", "ipt", "icv"] && ((nrow, ncol, nnzero) = intvals) || ((nrow, ncol) = intvals)
 
-      if (dattyp == "rhs" & orgniz == 's') |
-         (dattyp in ["ipt", "icv", "ord"])
+      if (dattyp == "rhs" && orgniz == 's') || (dattyp in ["ipt", "icv", "ord"])
+        # Read indices.
         if dattyp == "ord"
           nnzero = nrow * ncol
-          auxfm = auxfm1
+          auxfm = auxfmts[1]
         else
+          auxfm1 = auxfmts[1]
           ip = read_array(rb, ncol+1, auxfm1)
-          auxfm = auxfm2
+          auxfm = auxfmts[2]
         end
 
         ind = read_array(rb, nnzero, auxfm)
+        data = reshape(ind, (nrow, ncol))
       end
 
-      data_type = data_types[numerf]
-      if dattyp != "rhs"
-        nnzero = nrow * ncol
-      end
-      if dattyp == "rhs" & orgniz == 's'
-        auxfm = auxfm3
-      else
-        auxfmt = auxfm1
-      end
-
-      val = read_array(rb, nnzero, auxfm)
-
-      if (dattyp == "rhs" & orgniz == 's') |
-         (dattyp in ["ipt", "icv", "ord"])
-        data = SparseMatrixCSC(nrow, ncol, ip, ind, vals)
-
-      else
+      if dattyp in ["rhs", "ipt", "icv"]
+        # Read values.
         if dattyp != "rhs"
-          data = reshape(vals, (nrow, ncol))
+          nnzero = nrow * ncol
+        end
+        if dattyp == "rhs" && orgniz == 's'
+          auxfm = auxfmts[3]
         else
-          data = vals
+          auxfm = auxfmts[1]
+        end
+
+        val = read_array(rb, nnzero, auxfm)
+
+        if (dattyp == "rhs" && orgniz == 's') || (dattyp in ["ipt", "icv", "ord"])
+          data = SparseMatrixCSC(nrow, ncol, ip, ind, vals)
+        else
+          data = (dattyp == "rhs") ? val : reshape(vals, (nrow, ncol))
         end
       end
 
-      meta = RBMeta(title, key, mxtype, nrow, ncol, nnzero, 0,
+      meta = RBMeta(title, key, "", nrow, ncol, nnzero, 0,
                     false, orgniz != 'e', false,
                     "", "", "",
                     dattyp, positn, orgniz, caseid, numerf,
@@ -148,7 +148,8 @@ end
 
 import Base.show, Base.print
 function show(io :: IO, rb :: RutherfordBoeingData)
-  s  = @sprintf("Rutherford-Boeing data %s of type %s\n", rb.meta.key, rb.meta.mxtype)
+  typ = (rb.meta.mxtype == "") ? rb.meta.dattyp : rb.meta.mxtype
+  s  = @sprintf("Rutherford-Boeing data %s of type %s\n", rb.meta.key, typ)
   s *= @sprintf("%d rows, %d cols, %d nonzeros\n", rb.meta.nrow, rb.meta.ncol, rb.meta.nnzero)
   print(io, s)
 end
