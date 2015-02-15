@@ -85,6 +85,8 @@ type RutherfordBoeingData
     else
 
       # Read supplementary data.
+      types_with_values = ["rhs", "sln", "est", "ipt", "icv"]
+
       dattyp = buffer1[1:3]
       positn = buffer1[4]
       orgniz = buffer1[5]
@@ -93,24 +95,27 @@ type RutherfordBoeingData
       intvals = map(int, split(chomp(buffer1[17:end])))
       auxfmts = split(strip(buffer2))
       auxfm1 = auxfm2 = auxfm3 = ""
-      dattyp in ["rhs", "ipt", "icv"] && ((nrow, ncol, nnzero) = intvals) || ((nrow, ncol) = intvals)
+      if dattyp in types_with_values
+        (nrow, ncol, nnzero) = intvals
+      else
+        (nrow, ncol) = intvals
+      end
+      if dattyp == "ord"
+        nnzero = nrow * ncol
+      end
 
-      if (dattyp == "rhs" && orgniz == 's') || (dattyp in ["ipt", "icv", "ord"])
+      if (dattyp == "rhs" && orgniz == 's') || (dattyp in ["ord", "ipt", "icv"])
         # Read indices.
-        if dattyp == "ord"
-          nnzero = nrow * ncol
-          auxfm = auxfmts[1]
-        else
+        auxfm = auxfmts[1]
+        if (dattyp == "rhs" && orgniz == 's')
           auxfm1 = auxfmts[1]
           ip = read_array(rb, ncol+1, auxfm1)
           auxfm = auxfmts[2]
         end
-
         ind = read_array(rb, nnzero, auxfm)
-        data = reshape(ind, (nrow, ncol))
       end
 
-      if dattyp in ["rhs", "ipt", "icv"]
+      if dattyp in types_with_values
         # Read values.
         if dattyp != "rhs"
           nnzero = nrow * ncol
@@ -123,11 +128,13 @@ type RutherfordBoeingData
 
         val = read_array(rb, nnzero, auxfm)
 
-        if (dattyp == "rhs" && orgniz == 's') || (dattyp in ["ipt", "icv", "ord"])
-          data = SparseMatrixCSC(nrow, ncol, ip, ind, vals)
+        if (dattyp == "rhs" && orgniz == 's') || (dattyp in ["ipt", "icv"])
+          data = SparseMatrixCSC(nrow, ncol, ip, ind, val)
         else
-          data = (dattyp == "rhs") ? val : reshape(vals, (nrow, ncol))
+          data = reshape(val, (nrow, ncol))
         end
+      else
+        data = reshape(ind, (nrow, ncol))
       end
 
       meta = RBMeta(title, key, "", nrow, ncol, nnzero, 0,
