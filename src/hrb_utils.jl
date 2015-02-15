@@ -93,7 +93,7 @@ function read_array(io :: IO, n :: Int, fmt :: String; is_complex :: Bool=false)
     x[end-rem+1 : end] = map(conv, chunk)
   end
   if scale != 0
-    x /= 10^scale
+    x /= 10.0^scale
   end
   return is_complex ? [Complex64(x[i], x[i+1]) for i = 1 : 2 : n-1] : x
 end
