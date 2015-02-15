@@ -2,8 +2,7 @@
 
 [![Build Status](https://travis-ci.org/JuliaSparse/HarwellRutherfordBoeing.jl.svg?branch=ci)](https://travis-ci.org/JuliaSparse/HarwellRutherfordBoeing.jl)
 [![Build status](https://ci.appveyor.com/api/projects/status/3qrjx53tfff2hnrl?svg=true)](https://ci.appveyor.com/project/dpo/harwellrutherfordboeing-jl)
-[![Coverage
-Status](https://coveralls.io/repos/JuliaSparse/HarwellRutherfordBoeing.jl/badge.svg?branch=coverage)](https://coveralls.io/r/JuliaSparse/HarwellRutherfordBoeing.jl?branch=coverage)
+[![Coverage Status](https://coveralls.io/repos/JuliaSparse/HarwellRutherfordBoeing.jl/badge.svg?branch=master)](https://coveralls.io/r/JuliaSparse/HarwellRutherfordBoeing.jl?branch=master)
 
 
 ## Installing
