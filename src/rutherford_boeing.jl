@@ -165,15 +165,17 @@ function print(io :: IO, rb :: RutherfordBoeingData)
   @printf("Rutherford-Boeing data %s\n", rb.meta.key)
   @printf("%s\n", rb.meta.title)
   @printf("%d rows, %d cols, %d nonzeros\n", rb.meta.nrow, rb.meta.ncol, rb.meta.nnzero)
-  if rb.meta.mxtype[1] == 'P'
-    dtype = "pattern only"
-  elseif rb.meta.mxtype[1] == 'R'
-    dtype = "real"
-  else
-    dtype = "complex"
+  if rb.meta.mxtype != ""
+    if rb.meta.mxtype[1] == 'P'
+      dtype = "pattern only"
+    elseif rb.meta.mxtype[1] == 'R'
+      dtype = "real"
+    else
+      dtype = "complex"
+    end
+    herm = rb.meta.hermitian ? "hermitian" : "non-hermitian"
+    assm = rb.meta.assembled ? "assembled" : "elemental"
+    @printf("(%s, %s, %s)\n", dtype, herm, assm)
   end
-  herm = rb.meta.hermitian ? "hermitian" : "non-hermitian"
-  assm = rb.meta.assembled ? "assembled" : "elemental"
-  @printf("(%s, %s, %s)\n", dtype, herm, assm)
   display(rb.data)
 end
