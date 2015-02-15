@@ -9,7 +9,7 @@ for hb_matrix in hb_matrices
   @printf("\n")
 end
 
-rb_matrices = ["commanche_dual.rb", "conf5_4-8x8-10.rb"]
+rb_matrices = ["commanche_dual.rb"]
 
 for rb_matrix in rb_matrices
   M = RutherfordBoeingData(rb_matrix)
