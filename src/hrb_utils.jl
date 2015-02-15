@@ -95,5 +95,5 @@ function read_array(io :: IO, n :: Int, fmt :: String; is_complex :: Bool=false)
   if scale != 0
     x /= 10.0^scale
   end
-  return is_complex ? [Complex64(x[i], x[i+1]) for i = 1 : 2 : n-1] : x
+  return is_complex ? [Complex128(x[i], x[i+1]) for i = 1 : 2 : n-1] : x
 end
