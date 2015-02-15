@@ -1,6 +1,6 @@
 using HarwellRutherfordBoeing
 
-hb_matrices = ["lock1074.pse" "well1850.rra" "young3c.csa" ]
+hb_matrices = ["lock1074.pse" "well1850.rra" "young3c.csa" "illc1033.rra" "mahindas.rua"]
 
 for hb_matrix in hb_matrices
   M = HarwellBoeingMatrix(hb_matrix)
