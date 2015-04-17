@@ -1,34 +1,34 @@
 # Helper functions to read Harwell-Boeing and Rutherford-Boeing data.
 
-function decode_int_fmt(fmt :: String)
+function decode_int_fmt(fmt :: AbstractString)
   if fmt[1] == '('
     fmt = uppercase(fmt[2:end-1])
   end
-  return map(int, split(fmt, 'I'))
+  return map(s -> parse(Int, s), split(fmt, 'I'))
 end
 
 
-function decode_real_fmt(fmt :: String)
+function decode_real_fmt(fmt :: AbstractString)
   fmt = join(split(fmt))  # Remove all white spaces.
   if fmt[1] == '('
     fmt = uppercase(fmt[2:end-1])
   end
-  scale = 0
+  scale = "0"
   if (',' in fmt)  # Process scale factor, e.g., 1P,5D16.9
     scale, fmt = split(fmt, ',')
     scale, _ = split(scale, 'P')
   elseif ('P' in fmt)
     scale, fmt = split(fmt, 'P')
   end
-  scale = int(scale)
+  scale = parse(Int, scale)
 
   fmt1 = split(fmt, '.')[1]
   if search(fmt1, 'E') > 0
-    (npl, len) = map(int, split(fmt1, 'E'))
+    (npl, len) = map(s -> parse(Int, s), split(fmt1, 'E'))
   elseif search(fmt1, 'D') > 0
-    (npl, len) = map(int, split(fmt1, 'D'))
+    (npl, len) = map(s -> parse(Int, s), split(fmt1, 'D'))
   elseif search(fmt1, 'F') > 0
-    (npl, len) = map(int, split(fmt1, 'F'))
+    (npl, len) = map(s -> parse(Int, s), split(fmt1, 'F'))
   else
     error("Malformed real format")
   end
@@ -37,7 +37,7 @@ function decode_real_fmt(fmt :: String)
 end
 
 
-function standardize_real(number_as_str :: String)
+function standardize_real(number_as_str :: AbstractString)
   s = join(split(number_as_str))  # for numbers in the form "0.24555165E 00".
   # change ".16000000+006" to ".16000000e+006". The first char could be +/-.
   if (search(s, 'E') + search(s, 'D') + search(s, 'e') + search(s, 'd')) == 0
@@ -51,15 +51,15 @@ function standardize_real(number_as_str :: String)
 end
 
 
-function read_array(io :: IO, n :: Int, fmt :: String; is_complex :: Bool=false)
+function read_array(io :: IO, n :: Int, fmt :: AbstractString; is_complex :: Bool=false)
   if 'I' in fmt
     scale = 0
     (npl, len) = decode_int_fmt(fmt)
-    conv = int
+    conv = s -> parse(Int, s)
     typ = Int64
   else
     (npl, len, scale) = decode_real_fmt(fmt)
-    conv = float
+    conv = s -> parse(Float64, s)
     typ = Float64
     if is_complex
       n *= 2

@@ -3,8 +3,8 @@ include("hrb_utils.jl")
 
 type HBMeta
   # Metadata attached to a Harwell-Boeing matrix.
-  title :: String
-  key   :: String
+  title :: AbstractString
+  key   :: AbstractString
 
   totcrd :: Int
   ptrcrd :: Int
@@ -12,7 +12,7 @@ type HBMeta
   valcrd :: Int
   rhscrd :: Int
 
-  mxtype :: String
+  mxtype :: AbstractString
   nrow :: Int
   ncol :: Int
   nnzero :: Int
@@ -21,18 +21,18 @@ type HBMeta
   hermitian :: Bool
   assembled :: Bool
 
-  ptrfmt :: String
-  indfmt :: String
-  valfmt :: String
-  rhsfmt :: String
+  ptrfmt :: AbstractString
+  indfmt :: AbstractString
+  valfmt :: AbstractString
+  rhsfmt :: AbstractString
 
   nrhs   :: Int
-  rhstyp :: String
+  rhstyp :: AbstractString
   nrhsix :: Int
 end
 
 
-RHSType = Union(Array{Float64,2}, Array{Complex64,2}, SparseMatrixCSC)
+@compat RHSType = Union{Array{Float64,2}, Array{Complex64,2}, SparseMatrixCSC}
 
 
 type HarwellBoeingMatrix
@@ -43,7 +43,7 @@ type HarwellBoeingMatrix
   guess  :: RHSType  # Initial guesses, if any.
   sol    :: RHSType  # Solutions, if any.
 
-  function HarwellBoeingMatrix(file_name :: String)
+  function HarwellBoeingMatrix(file_name :: AbstractString)
     hb = open(file_name)
 
     # Read header.
@@ -51,12 +51,14 @@ type HarwellBoeingMatrix
     line  = readline(hb)
     title = strip(line[1:72])      # A72
     key   = strip(line[73:end-1])  # A8
-    totcrd, ptrcrd, indcrd, valcrd, rhscrd = map(int, split(chomp(readline(hb))))
+    totcrd, ptrcrd, indcrd, valcrd, rhscrd = map(s -> parse(Int, s),
+                                                 split(chomp(readline(hb))))
 
     line = readline(hb)
     mxtype = line[1:3]   # A3
     # Skip 11 blanks.
-    nrow, ncol, nnzero, neltvl = map(int, [line[14 + 14*(i-1)+1 : 14 + 14*i] for i = 1 : 4])
+    nrow, ncol, nnzero, neltvl = map(s -> parse(Int, s),
+                                     [line[14 + 14*(i-1)+1 : 14 + 14*i] for i = 1 : 4])
 
     pattern_only = (mxtype[1] == 'P')
     is_complex = (mxtype[1] == 'C')
@@ -75,7 +77,7 @@ type HarwellBoeingMatrix
     if rhscrd > 0
       line = readline(hb)
       rhstyp = line[1:3]  # A3
-      nrhs, nrhsix = map(int, split(chomp(line[15:end])))
+      nrhs, nrhsix = map(s -> parse(Int, s), split(chomp(line[15:end])))
 
     else
       rhstyp = "   "

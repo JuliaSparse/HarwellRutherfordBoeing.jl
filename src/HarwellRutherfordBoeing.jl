@@ -1,5 +1,7 @@
 module HarwellRutherfordBoeing
 
+using Compat
+
 export HarwellBoeingMatrix, RutherfordBoeingData
 
 include("harwell_boeing.jl")

@@ -2,10 +2,10 @@ include("hrb_utils.jl")
 
 type RBMeta
   # Metadata attached to Rutherford-Boeing data.
-  title :: String
-  key   :: String
+  title :: AbstractString
+  key   :: AbstractString
 
-  mxtype :: String
+  mxtype :: AbstractString
   nrow :: Int
   ncol :: Int
   nnzero :: Int
@@ -15,22 +15,22 @@ type RBMeta
   assembled :: Bool
   pattern_only :: Bool
 
-  ptrfmt :: String
-  indfmt :: String
-  valfmt :: String
+  ptrfmt :: AbstractString
+  indfmt :: AbstractString
+  valfmt :: AbstractString
 
-  dattyp :: String
+  dattyp :: AbstractString
   positn :: Char
   orgniz :: Char
-  caseid :: String
+  caseid :: AbstractString
   numerf :: Char
-  auxfm1 :: String
-  auxfm2 :: String
-  auxfm3 :: String
+  auxfm1 :: AbstractString
+  auxfm2 :: AbstractString
+  auxfm3 :: AbstractString
 end
 
 
-RBDataType = Union(Array{Int64,2}, Array{Float64,2}, Array{Complex128,2}, SparseMatrixCSC)
+@compat RBDataType = Union{Array{Int64,2}, Array{Float64,2}, Array{Complex128,2}, SparseMatrixCSC}
 
 
 type RutherfordBoeingData
@@ -38,8 +38,7 @@ type RutherfordBoeingData
   meta :: RBMeta
   data :: RBDataType
 
-  function RutherfordBoeingData(file_name :: String)
-    data_types = ['r' => Float64, 'c' => Complex128, 'i' => Int64]
+  function RutherfordBoeingData(file_name :: AbstractString)
     rb = open(file_name)
 
     # Read header.
@@ -53,13 +52,13 @@ type RutherfordBoeingData
     if buffer2[3] in ['a', 'e']
       # Read a matrix.
       mxtype = buffer2[1:3]
-      nrow, ncol, nnzero, neltvl = map(int, split(chomp(buffer2[4:end])))
+      nrow, ncol, nnzero, neltvl = map(s -> parse(Int, s),
+                                       split(chomp(buffer2[4:end])))
 
       pattern_only = (mxtype[1] in ['p', 'q'])
       if pattern_only
         ptrfmt, indfmt = split(strip(readline(rb)))
       else
-        data_type = data_types[mxtype[1]]
         ptrfmt, indfmt, valfmt = split(strip(readline(rb)))
       end
 
@@ -92,7 +91,7 @@ type RutherfordBoeingData
       orgniz = buffer1[5]
       caseid = buffer1[7:14]
       numerf = buffer1[16]
-      intvals = map(int, split(chomp(buffer1[17:end])))
+      intvals = map(s -> parse(Int, s), split(chomp(buffer1[17:end])))
       auxfmts = split(strip(buffer2))
       auxfm1 = auxfm2 = auxfm3 = ""
       if dattyp in types_with_values
