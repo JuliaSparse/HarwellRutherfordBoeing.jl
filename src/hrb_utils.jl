@@ -56,7 +56,7 @@ function read_array(io :: IO, n :: Int, fmt :: AbstractString; is_complex :: Boo
     scale = 0
     (npl, len) = decode_int_fmt(fmt)
     conv = s -> parse(Int, s)
-    typ = Int64
+    typ = Int
   else
     (npl, len, scale) = decode_real_fmt(fmt)
     conv = s -> parse(Float64, s)

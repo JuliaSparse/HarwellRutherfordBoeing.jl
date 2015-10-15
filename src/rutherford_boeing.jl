@@ -30,7 +30,7 @@ type RBMeta
 end
 
 
-@compat RBDataType = Union{Array{Int64,2}, Array{Float64,2}, Array{Complex128,2}, SparseMatrixCSC}
+@compat RBDataType = Union{Array{Int,2}, Array{Float64,2}, Array{Complex128,2}, SparseMatrixCSC}
 
 
 type RutherfordBoeingData
