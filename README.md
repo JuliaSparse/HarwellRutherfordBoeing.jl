@@ -7,9 +7,8 @@
 
 ## Installing
 
-For now:
 ````JULIA
-julia> Pkg.clone("https://github.com/JuliaSparse/HarwellRutherfordBoeing.jl.git")
+julia> Pkg.add("HarwellRutherfordBoeing")
 julia> Pkg.test("HarwellRutherfordBoeing")
 ````
 
