@@ -96,6 +96,8 @@ type HarwellBoeingMatrix
       vallen = assembled ? nnzero : neltvl
       vals = read_array(hb, vallen, valfmt, is_complex=is_complex)
     end
+    # Ensure row indices are sorted in each column.
+    sortsparse!(ip, ind, vals)
     matrix = SparseMatrixCSC(nrow, ncol, ip, ind, vals)
 
     # Read right-hand sides, if any.
@@ -103,6 +105,8 @@ type HarwellBoeingMatrix
         rhsptr  = read_array(hb, nrhs+1, ptrfmt)
         rhsind  = read_array(hb, nrhsix, indfmt)
         rhsvals = read_array(hb, nrhsix, rhsfmt, is_complex=is_complex)
+        # Ensure row indices are sorted in each column.
+        sortsparse!(rhsptr, rhsind, rhsvals)
         rhs = SparseMatrixCSC(nrow, nrhs, rhsptr, rhsind, rhsvals)
 
     else

@@ -97,3 +97,19 @@ function read_array(io :: IO, n :: Int, fmt :: AbstractString; is_complex :: Boo
   end
   return is_complex ? [Complex128(x[i], x[i+1]) for i = 1 : 2 : n-1] : x
 end
+
+
+function sortsparse!{Ti <: Integer, Tf <: Number}(colptr :: Vector{Ti}, rowind :: Vector{Ti}, values :: Vector{Tf})
+  # ensure row indices are sorted in each column
+  ncol = length(colptr) - 1
+  for col = 1 : ncol
+    colbeg = colptr[col]
+    colend = colptr[col + 1] - 1
+    rows = rowind[colbeg:colend]
+    if !issorted(rows)
+      p = sortperm(rows)
+      rowind[colbeg:colend] = rows[p]
+      values[colbeg:colend] = values[colbeg:colend][p]
+    end
+  end
+end

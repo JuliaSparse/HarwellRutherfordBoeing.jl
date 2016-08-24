@@ -74,6 +74,8 @@ type RutherfordBoeingData
       else
         vals = read_array(rb, nreal, valfmt)
       end
+      # Ensure row indices are sorted in each column.
+      sortsparse!(ip, ind, vals)
       data = SparseMatrixCSC(nrow, ncol, ip, ind, vals)
 
       meta = RBMeta(title, key, mxtype, nrow, ncol, nnzero, neltvl,
@@ -125,12 +127,14 @@ type RutherfordBoeingData
           auxfm = auxfmts[1]
         end
 
-        val = read_array(rb, nnzero, auxfm)
+        vals = read_array(rb, nnzero, auxfm)
 
         if (dattyp == "rhs" && orgniz == 's') || (dattyp in ["ipt", "icv"])
-          data = SparseMatrixCSC(nrow, ncol, ip, ind, val)
+          # Ensure row indices are sorted in each column.
+          sortsparse!(ip, ind, vals)
+          data = SparseMatrixCSC(nrow, ncol, ip, ind, vals)
         else
-          data = reshape(val, (nrow, ncol))
+          data = reshape(vals, (nrow, ncol))
         end
       else
         data = reshape(ind, (nrow, ncol))
