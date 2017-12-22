@@ -49,9 +49,9 @@ type RutherfordBoeingData
     buffer1 = readline(rb)         # A80
     buffer2 = readline(rb)         # A80
 
-    if buffer2[3] in ['a', 'e']
+    if lowercase(buffer2[3]) in ['a', 'e']
       # Read a matrix.
-      mxtype = buffer2[1:3]
+      mxtype = lowercase(buffer2[1:3])
       nrow, ncol, nnzero, neltvl = map(s -> parse(Int, s),
                                        split(chomp(buffer2[4:end])))
 
