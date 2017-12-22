@@ -4,7 +4,7 @@ function decode_int_fmt(fmt :: AbstractString)
   if fmt[1] == '('
     fmt = uppercase(fmt[2:end-1])
   end
-  return map(s -> parse(Int, s), split(fmt, 'I'))
+  return map(s -> isempty(s) ? 1 : parse(Int, s), split(fmt, 'I'))
 end
 
 
@@ -24,11 +24,11 @@ function decode_real_fmt(fmt :: AbstractString)
 
   fmt1 = split(fmt, '.')[1]
   if search(fmt1, 'E') > 0
-    (npl, len) = map(s -> parse(Int, s), split(fmt1, 'E'))
+    (npl, len) = map(s -> isempty(s) ? 1 : parse(Int, s), split(fmt1, 'E'))
   elseif search(fmt1, 'D') > 0
-    (npl, len) = map(s -> parse(Int, s), split(fmt1, 'D'))
+    (npl, len) = map(s -> isempty(s) ? 1 : parse(Int, s), split(fmt1, 'D'))
   elseif search(fmt1, 'F') > 0
-    (npl, len) = map(s -> parse(Int, s), split(fmt1, 'F'))
+    (npl, len) = map(s -> isempty(s) ? 1 : parse(Int, s), split(fmt1, 'F'))
   else
     error("Malformed real format")
   end
