@@ -49,9 +49,9 @@ type RutherfordBoeingData
     buffer1 = readline(rb)         # A80
     buffer2 = readline(rb)         # A80
 
-    if buffer2[3] in ['a', 'e']
+    if lowercase(buffer2[3]) in ['a', 'e']
       # Read a matrix.
-      mxtype = buffer2[1:3]
+      mxtype = lowercase(buffer2[1:3])
       nrow, ncol, nnzero, neltvl = map(s -> parse(Int, s),
                                        split(chomp(buffer2[4:end])))
 
@@ -169,9 +169,9 @@ function print(io :: IO, rb :: RutherfordBoeingData)
   @printf("%s\n", rb.meta.title)
   @printf("%d rows, %d cols, %d nonzeros\n", rb.meta.nrow, rb.meta.ncol, rb.meta.nnzero)
   if rb.meta.mxtype != ""
-    if rb.meta.mxtype[1] == 'P'
+    if rb.meta.mxtype[1] == 'p'
       dtype = "pattern only"
-    elseif rb.meta.mxtype[1] == 'R'
+    elseif rb.meta.mxtype[1] == 'r'
       dtype = "real"
     else
       dtype = "complex"
