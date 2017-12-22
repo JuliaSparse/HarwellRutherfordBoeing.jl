@@ -169,9 +169,9 @@ function print(io :: IO, rb :: RutherfordBoeingData)
   @printf("%s\n", rb.meta.title)
   @printf("%d rows, %d cols, %d nonzeros\n", rb.meta.nrow, rb.meta.ncol, rb.meta.nnzero)
   if rb.meta.mxtype != ""
-    if rb.meta.mxtype[1] == 'P'
+    if rb.meta.mxtype[1] == 'p'
       dtype = "pattern only"
-    elseif rb.meta.mxtype[1] == 'R'
+    elseif rb.meta.mxtype[1] == 'r'
       dtype = "real"
     else
       dtype = "complex"
