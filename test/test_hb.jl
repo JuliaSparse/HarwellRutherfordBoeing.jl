@@ -4,8 +4,7 @@ hb_matrices = ["lock1074.pse" "well1850.rra" "young3c.csa" "illc1033.rra" "mahin
 
 for hb_matrix in hb_matrices
   M = HarwellBoeingMatrix(hb_matrix)
-  show(STDOUT, M)
-  print(M)
+  show(M)
   @printf("\n")
 end
 
@@ -13,8 +12,7 @@ rb_matrices = ["commanche_dual.rb"]
 
 for rb_matrix in rb_matrices
   M = RutherfordBoeingData(rb_matrix)
-  show(STDOUT, M)
-  print(M)
+  show(M)
   @printf("\n")
 end
 
@@ -23,7 +21,6 @@ rb_data = ["ordering.rb", "denserhs.rb", "sparserhs.rb", "estimate.rb", "solutio
 
 for rb_datum in rb_data
   M = RutherfordBoeingData(rb_datum)
-  show(STDOUT, M)
-  print(M)
+  show(M)
   @printf("\n")
 end

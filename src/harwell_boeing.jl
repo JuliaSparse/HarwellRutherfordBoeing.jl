@@ -1,7 +1,4 @@
-include("hrb_utils.jl")
-
-
-type HBMeta
+mutable struct HBMeta
   # Metadata attached to a Harwell-Boeing matrix.
   title :: AbstractString
   key   :: AbstractString
@@ -32,10 +29,10 @@ type HBMeta
 end
 
 
-@compat RHSType = Union{Array{Float64,2}, Array{Complex64,2}, SparseMatrixCSC}
+const RHSType = Union{Array{Float64,2}, Array{ComplexF32,2}, SparseMatrixCSC}
 
 
-type HarwellBoeingMatrix
+mutable struct HarwellBoeingMatrix
 
   meta   :: HBMeta
   matrix :: SparseMatrixCSC
@@ -64,7 +61,7 @@ type HarwellBoeingMatrix
     is_complex = (mxtype[1] == 'C')
     hermitian = (mxtype[2] == 'S')
     assembled = (mxtype[3] == 'A')
-    data_type = is_complex ? Complex64 : Float64
+    data_type = is_complex ? ComplexF32 : Float64
 
     line = readline(hb)
     ptrfmt = strip(line[1:16])  # 2A16

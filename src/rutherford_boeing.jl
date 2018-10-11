@@ -1,6 +1,4 @@
-include("hrb_utils.jl")
-
-type RBMeta
+mutable struct RBMeta
   # Metadata attached to Rutherford-Boeing data.
   title :: AbstractString
   key   :: AbstractString
@@ -30,10 +28,10 @@ type RBMeta
 end
 
 
-@compat RBDataType = Union{Array{Int,2}, Array{Float64,2}, Array{Complex128,2}, SparseMatrixCSC}
+const RBDataType = Union{Array{Int,2}, Array{Float64,2}, Array{ComplexF64,2}, SparseMatrixCSC}
 
 
-type RutherfordBoeingData
+mutable struct RutherfordBoeingData
 
   meta :: RBMeta
   data :: RBDataType

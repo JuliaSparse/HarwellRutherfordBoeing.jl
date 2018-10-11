@@ -1,2 +1,3 @@
-println("Running tests ...")
+using Printf
+
 include("test_hb.jl")
