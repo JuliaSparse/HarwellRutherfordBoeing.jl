@@ -5,8 +5,9 @@ os:
   - linux
 
 julia:
-  - 0.7
   - 1.0
+  - 1.1
+  - 1.2
   - nightly
 
 branches:
@@ -16,10 +17,6 @@ branches:
 matrix:
   allow_failures:
     - julia: nightly
-
-script:
-  - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
-  - julia --check-bounds=yes -e 'using Pkg; Pkg.clone(pwd()); Pkg.build("HarwellRutherfordBoeing"); Pkg.test("HarwellRutherfordBoeing"; coverage=true)'
 
 after_success:
   - julia -e 'using Pkg; cd(Pkg.dir("HarwellRutherfordBoeing")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'
