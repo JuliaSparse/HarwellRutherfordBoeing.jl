@@ -9,7 +9,11 @@ mutable struct RBMeta
   nnzero :: Int
   neltvl :: Int
 
+  symmetric :: Bool
+  unsymmetric :: Bool
   hermitian :: Bool
+  skew_symmetric :: Bool
+  rectangular :: Bool
   assembled :: Bool
   pattern_only :: Bool
 
@@ -54,6 +58,13 @@ mutable struct RutherfordBoeingData
                                        split(chomp(buffer2[4:end])))
 
       pattern_only = (mxtype[1] in ['p', 'q'])
+      symmetric = (mxtype[2] == 's')
+      unsymmetric = (mxtype[2] == 'u')
+      hermitian = (mxtype[2] == 'h')
+      skew_symmetric = (mxtype[2] == 'z')
+      rectangular = (mxtype[2] == 'r')
+      assembled = (mxtype[3] == 'a')
+
       if pattern_only
         ptrfmt, indfmt = split(strip(readline(rb)))
       else
@@ -77,7 +88,8 @@ mutable struct RutherfordBoeingData
       data = SparseMatrixCSC(nrow, ncol, ip, ind, vals)
 
       meta = RBMeta(title, key, mxtype, nrow, ncol, nnzero, neltvl,
-                    mxtype[2] == 's', mxtype[3] == 'a', pattern_only,
+                    symmetric, unsymmetric, hermitian, skew_symmetric,
+                    rectangular, assembled, pattern_only,
                     ptrfmt, indfmt, pattern_only ? "" : valfmt,
                     "", '\0', '\0', "", '\0', "", "", "")
 
@@ -139,6 +151,7 @@ mutable struct RutherfordBoeingData
       end
 
       meta = RBMeta(title, key, "", nrow, ncol, nnzero, 0,
+                    false, false, false, false,
                     false, orgniz != 'e', false,
                     "", "", "",
                     dattyp, positn, orgniz, caseid, numerf,
@@ -167,14 +180,30 @@ function print(io :: IO, rb :: RutherfordBoeingData)
   @printf("%s\n", rb.meta.title)
   @printf("%d rows, %d cols, %d nonzeros\n", rb.meta.nrow, rb.meta.ncol, rb.meta.nnzero)
   if rb.meta.mxtype != ""
-    if rb.meta.mxtype[1] == 'P'
+    if rb.meta.mxtype[1] in ['p', 'q']
       dtype = "pattern only"
-    elseif rb.meta.mxtype[1] == 'R'
+    elseif rb.meta.mxtype[1] == 'r'
       dtype = "real"
-    else
+    elseif rb.meta.mxtype[1] == 'c'
       dtype = "complex"
+    elseif rb.meta.mxtype[1] == 'i'
+      dtype = "integer"
+    else
+      dtype = "unknown" # should not exist
     end
-    herm = rb.meta.hermitian ? "hermitian" : "non-hermitian"
+    if hb.meta.mxtype[2] == 's'
+      herm = "symmetric"
+    elseif hb.meta.mxtype[2] == 'u'
+      herm = "unsymmetric"
+    elseif hb.meta.mxtype[2] == 'h'
+      herm = "hermitian"
+    elseif hb.meta.mxtype[2] == 'z'
+      herm = "skew-symmetric"
+    elseif hb.meta.mxtype[2] == 'r'
+      herm = "rectangular"
+    else
+      herm = "unknown" # should not exist
+    end
     assm = rb.meta.assembled ? "assembled" : "elemental"
     @printf("(%s, %s, %s)\n", dtype, herm, assm)
   end
