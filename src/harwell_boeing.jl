@@ -15,8 +15,13 @@ mutable struct HBMeta
   nnzero :: Int
   neltvl :: Int
 
+  symmetric :: Bool
+  unsymmetric :: Bool
   hermitian :: Bool
+  skew_symmetric :: Bool
+  rectangular :: Bool
   assembled :: Bool
+  pattern_only :: Bool
 
   ptrfmt :: AbstractString
   indfmt :: AbstractString
@@ -59,7 +64,11 @@ mutable struct HarwellBoeingMatrix
 
     pattern_only = (mxtype[1] == 'P')
     is_complex = (mxtype[1] == 'C')
-    hermitian = (mxtype[2] == 'S')
+    symmetric = (mxtype[2] == 'S')
+    unsymmetric = (mxtype[2] == 'U')
+    hermitian = (mxtype[2] == 'H')
+    skew_symmetric = (mxtype[2] == 'Z')
+    rectangular = (mxtype[2] == 'R')
     assembled = (mxtype[3] == 'A')
     data_type = is_complex ? ComplexF32 : Float64
 
@@ -135,7 +144,9 @@ mutable struct HarwellBoeingMatrix
     close(hb)
 
     meta = HBMeta(title, key, totcrd, ptrcrd, indcrd, valcrd, rhscrd,
-                  mxtype, nrow, ncol, nnzero, neltvl, hermitian, assembled,
+                  mxtype, nrow, ncol, nnzero, neltvl,
+                  symmetric, unsymmetric, hermitian, skew_symmetric,
+                  rectangular, assembled, pattern_only,
                   ptrfmt, indfmt, valfmt, rhsfmt, nrhs, rhstyp, nrhsix)
 
     new(meta, matrix, rhs, guess, sol)
@@ -161,10 +172,24 @@ function print(io :: IO, hb :: HarwellBoeingMatrix)
     dtype = "pattern only"
   elseif hb.meta.mxtype[1] == 'R'
     dtype = "real"
-  else
+  elseif hb.meta.mxtype[1] == 'C'
     dtype = "complex"
+  else
+    dtype = "unknown" # should not exist
   end
-  herm = hb.meta.hermitian ? "hermitian" : "non-hermitian"
+  if hb.meta.mxtype[2] == 'S'
+    herm = "symmetric"
+  elseif hb.meta.mxtype[2] == 'U'
+    herm = "unsymmetric"
+  elseif hb.meta.mxtype[2] == 'H'
+    herm = "hermitian"
+  elseif hb.meta.mxtype[2] == 'Z'
+    herm = "skew-symmetric"
+  elseif hb.meta.mxtype[2] == 'R'
+    herm = "rectangular"
+  else
+    herm = "unknown" # should not exist
+  end
   assm = hb.meta.assembled ? "assembled" : "elemental"
   @printf("(%s, %s, %s)\n", dtype, herm, assm)
   @printf("%d right-hand sides, %d guesses, %d solutions\n",
