@@ -4,17 +4,18 @@
 # and integer data. That's a truckload of variants, but the alternative
 # is very slow.
 
+const real_fortfmt = ["(8E10.1E3)", "(7E11.2E3)", "(6E12.3E3)", "(6E13.4E3)",
+                      "(5E14.5E3)", "(5E15.6E3)", "(5E16.7E3)", "(4E17.8E3)",
+                      "(4E18.9E3)", "(4E19.10E3)", "(4E20.11E3)", "(3E21.12E3)",
+                      "(3E22.13E3)", "(3E23.14E3)", "(3E24.15E3)", "(3E25.16E3)"]
 
-global const real_fortfmt = ["(8E10.1E3)", "(7E11.2E3)", "(6E12.3E3)", "(6E13.4E3)",
-                             "(5E14.5E3)", "(5E15.6E3)", "(5E16.7E3)", "(4E17.8E3)",
-                             "(4E18.9E3)", "(4E19.10E3)", "(4E20.11E3)", "(3E21.12E3)",
-                             "(3E22.13E3)", "(3E23.14E3)", "(3E24.15E3)", "(3E25.16E3)"]
-global const real_fmts = ["%10.1e", "%11.2e", "%12.3e", "%13.4e",
-                          "%14.5e", "%15.6e", "%16.7e", "%17.8e",
-                          "%18.9e", "%19.10e", "%20.11e", "%21.12e",
-                          "%22.13e", "%23.14e", "%24.15e", "%25.16e"]
-global const real_lens = 10:25
-global const real_nitems = [8, 7, 6, 6, 5, 5, 5, 4, 4, 4, 4, 3, 3, 3, 3, 3]
+const real_fmts = ["%10.1e", "%11.2e", "%12.3e", "%13.4e",
+                   "%14.5e", "%15.6e", "%16.7e", "%17.8e",
+                   "%18.9e", "%19.10e", "%20.11e", "%21.12e",
+                   "%22.13e", "%23.14e", "%24.15e", "%25.16e"]
+
+const real_lens = 10:25
+const real_nitems = [8, 7, 6, 6, 5, 5, 5, 4, 4, 4, 4, 3, 3, 3, 3, 3]
 
 # define several variants of @sprintf per format
 for (fmt, len, nitem) in zip(real_fmts, real_lens, real_nitems)
@@ -30,9 +31,9 @@ for (fmt, len, nitem) in zip(real_fmts, real_lens, real_nitems)
   end
 end
 
-global const int_lens = vcat(collect(2:11), [20])
-global const int_fmts = ["%$(k)d" for k in int_lens]
-global const int_nitems = [40, 26, 20, 16, 13, 11, 10, 8, 8, 7, 4]
+const int_lens = vcat(collect(2:11), [20])
+const int_fmts = ["%$(k)d" for k in int_lens]
+const int_nitems = [40, 26, 20, 16, 13, 11, 10, 8, 8, 7, 4]
 
 # define several variants of @sprintf per format
 for (fmt, len, nitem) in zip(int_fmts, int_lens, int_nitems)
@@ -68,19 +69,19 @@ function get_real_fmt(p :: Int)
 end
 
 
-function fortran_write_line{T <: AbstractFloat}(io :: IOStream, data :: Vector{T}, sprintf_variant :: Function)
+function fortran_write_line(io :: IOStream, data :: Vector{T}, sprintf_variant :: Function) where {T <: AbstractFloat}
   length(data) > 0 || return
   print(io, replace(sprintf_variant(data), r"[eE]", "D"))
 end
 
 
-function fortran_write_line{T <: Integer}(io :: IOStream, data :: Vector{T}, sprintf_variant :: Function)
+function fortran_write_line(io :: IOStream, data :: Vector{T}, sprintf_variant :: Function) where {T <: Integer}
   length(data) > 0 || return
   print(io, sprintf_variant(data))
 end
 
 
-function fortran_write_array{T <: Integer}(io :: IOStream, data :: Vector{T}, chunk_size :: Int, ndigits :: Int)
+function fortran_write_array(io :: IOStream, data :: Vector{T}, chunk_size :: Int, ndigits :: Int) where {T <: Integer}
   nelts = length(data)
   nlines, leftover = fldmod(nelts, chunk_size)
   sprintf_full_line = eval(Symbol("sprintf_int_$(chunk_size)_$ndigits"))
@@ -94,7 +95,7 @@ function fortran_write_array{T <: Integer}(io :: IOStream, data :: Vector{T}, ch
 end
 
 
-function fortran_write_array{T <: AbstractFloat}(io :: IOStream, data :: Vector{T}, chunk_size :: Int, width :: Int)
+function fortran_write_array(io :: IOStream, data :: Vector{T}, chunk_size :: Int, width :: Int) where {T <: AbstractFloat}
   nelts = length(data)
   nlines, leftover = fldmod(nelts, chunk_size)
   sprintf_full_line = eval(Symbol("sprintf_real_$(chunk_size)_$width"))
@@ -108,12 +109,12 @@ function fortran_write_array{T <: AbstractFloat}(io :: IOStream, data :: Vector{
 end
 
 
-global const data_types = ["ord", "rhs", "sln", "est", "evl", "svl", "evc",
-                           "svc", "sbv", "sbm", "sbp", "ipt", "icv", "lvl",
-                           "geo", "avl"]
+const data_types = ["ord", "rhs", "sln", "est", "evl", "svl", "evc",
+                    "svc", "sbv", "sbm", "sbp", "ipt", "icv", "lvl",
+                    "geo", "avl"]
 
-global const organizations = ['s', 'd', 'e']
-global const positions = ['r', 'l', 's']
+const organizations = ['s', 'd', 'e']
+const positions = ['r', 'l', 's']
 
 """Write auxilliary data to file in Rutherford-Boeing format.
 
@@ -133,11 +134,11 @@ global const positions = ['r', 'l', 's']
 * `nauxd::Int`: supplementary integer parameters
 * `precision::Int`: number of significant digits to write for real data
 """
-function write_rb_aux{Ti <: Integer, Tr <: Real}(
+function write_rb_aux(
   filename :: String, vecs :: SparseMatrixCSC{Tr,Ti};
   title :: String="Generic", key :: String="Generic", caseid :: String="Generic",
   dattyp :: String="rhs", positn :: Char='r',
-  orgniz :: Char='d', nauxd :: Int=0, precision :: Int=16)
+  orgniz :: Char='d', nauxd :: Int=0, precision :: Int=16) where {Ti <: Integer, Tr <: Real}
 
   dattyp in data_types || error("unknown data type: $dattyp")
   positn in positions || error("unknown position: $positn")
@@ -229,11 +230,11 @@ end
 * `pattern_only::Bool`: only store the sparsity pattern
 * `precision::Int`: number of significant digits to write for real data
 """
-function write_rb{Ti <: Integer, Tr <: Real}(
+function write_rb(
   filename :: String, matrix :: SparseMatrixCSC{Tr,Ti};
   title :: String="Generic", key :: String="Generic",
   symmetric :: Bool=false, skew :: Bool=false,
-  pattern_only :: Bool=false, precision :: Int=16)
+  pattern_only :: Bool=false, precision :: Int=16) where {Ti <: Integer, Tr <: Real}
 
   nrow, ncol = size(matrix)
   ne = nnz(matrix)
