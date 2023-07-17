@@ -1,13 +1,13 @@
 name = "HarwellRutherfordBoeing"
 uuid = "ce388394-9b3f-5993-a911-eb95552e4f2e"
-version = "0.1.0"
+version = "0.2.0"
 
 [deps]
 Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 
 [compat]
-julia = "≥ 1.0.0"
+julia = "^1.6.0"
 
 [extras]
 Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
